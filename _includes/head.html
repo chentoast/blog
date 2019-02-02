@@ -1,7 +1,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>{{ page.title }}</title>
-	<link rel="stylesheet" href="{{ "css/main.css" | absolute_url }}">
-	<h1 class="header"><a href="{{ site.baseurl }}">Completely Random Measure</a></h1>
+	<link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
+	<h1 class="header"><a href="{{ site.baseurl }}/">Completely Random Measure</a></h1>
 	<hr>
 </head>
