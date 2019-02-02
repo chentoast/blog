@@ -1,10 +1,16 @@
 ---
 layout: default
+title: Completely Random Measure
 ---
-<ul>
+<ul class="header">
 	{% for post in site.posts %}
 	<li>
-		<h2><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h2>
+		<table style="width:80%;font-size:20px;">
+			<tr>
+				<td><p >{{ post.date | date_to_string }}</p></td>
+				<td><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></td>
+			</tr>
+		</table>
 	</li>
 	{% endfor %}
 </ul>
