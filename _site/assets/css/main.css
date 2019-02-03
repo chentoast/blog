@@ -28,11 +28,8 @@
 }
 
 .footer {
-	position: absolute;
-	clear:both;
-	left:100px;
-	right:100px;
-	bottom: 40px;
+	height:50px;
+	margin: 25px 600px 15px 600px;
 	text-align: center; 
 }
 
@@ -58,10 +55,6 @@ a:hover {
 	text-decoration:underline;
 }
 
-td {
-	border:1px solid black;
-}
-
 table {
 	table-layout: fixed;
 	width:1000px;;
@@ -69,5 +62,4 @@ table {
 	margin-left:auto;
 	margin-right:auto;
 	text-align:left;
-	border:1px solid black;
 }
