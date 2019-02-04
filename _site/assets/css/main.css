@@ -3,13 +3,30 @@
 }
 
 .header {
-	margin:100px 600px 10px 600px;
+	padding-top: 10%;
+	width:40%;
+	margin-left: auto;
+	margin-right: auto;
 	text-align: center !important;
 }
 
-.listings {
-	margin:100px 500px 5px 500px;
-	text-align: center;
+.post-listings {
+	width:60%;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.listing-date {
+	width:30%;
+	text-align:right;
+}
+
+.listing-title {
+	padding-left:10%;
+	padding-right:5%;
+	width:70%;
+	text-align:center;
+	max-width:400px;
 }
 
 .post-contents {
@@ -29,7 +46,10 @@
 
 .footer {
 	height:50px;
-	margin: 25px 600px 15px 600px;
+	margin-top: 5%;
+	margin-left: auto;
+	margin-right: auto;
+	width: 40%;
 	text-align: center; 
 }
 
@@ -55,10 +75,15 @@ a:hover {
 	text-decoration:underline;
 }
 
+td {
+	word-wrap:break-word;
+	height:1px;
+}
+
 table {
 	table-layout: fixed;
-	width:1000px;;
-	font-size:20px;
+	width:600px;;
+	font-size:17px;
 	margin-left:auto;
 	margin-right:auto;
 	text-align:left;

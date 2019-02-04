@@ -20,7 +20,7 @@
 	<h4 style="text-align:center;margin-top:0px;margin-bottom:0px;">Tony Chen</h4>
 	<h4 style="text-align:center;margin-top:0px;margin-bottom:50px;">01 Feb 2019</h4>
 	<div class="post">
-		<p>For my first post, I thought I would start with a topic that forms the cornerstone of Bayesian Modeling, and unifies many far reaching ideas in statistics.</p>
+		<p>For my first post, I thought I would start with a topic that forms the cornerstone of Bayesian Modeling, and unifies many far reaching ideas in statistics.  I’ll introduce the concept, and go over just a few of their basic and nice properties.</p>
 
 <h2 id="what-are-exponential-families">What are Exponential Families?</h2>
 
@@ -63,7 +63,7 @@
 <p><script type="math/tex">\eta = log(\frac{\pi}{1-\pi})</script>
 <script type="math/tex">\implies \mathbb{E}(X) = \pi = \frac{1}{e^{\eta} - 1}</script></p>
 
-<p>Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon lies at the heart of GeneraLized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.</p>
+<p>Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon lies at the heart of Generalized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.</p>
 
 <h2 id="sufficiency">Sufficiency</h2>
 
@@ -87,7 +87,7 @@
 
 <script type="math/tex; mode=display">= h(x)g(\eta, T(x))</script>
 
-<p>And so we have that \(T(x) \) is a sufficient statistic.  T(x) will play a very large role in the next inference for exponential families, which will up soon</p>
+<p>And so we have that \(T(x) \) is a sufficient statistic.  T(x) will play a very large role in the next inference for exponential families, which will come up soon.</p>
 
 <h2 id="moments">Moments</h2>
 
@@ -135,11 +135,11 @@
 
 <script type="math/tex; mode=display">\implies \frac{\partial }{\partial \eta}A(\eta) = \mathbb{E}(T(x)) = \frac{1}{N}\sum_{i=1}^{N}T(x_{i})</script>
 
-<p>Thus, we have that the maximum likelihood estimate for \(\eta \) is simply the one that equations the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.</p>
+<p>Thus, we have that the maximum likelihood estimate for \(\eta \) is simply the one that equates the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.</p>
 
 <p>And finally, saving the best for the last, we have the property of conjugacy, which is a wholly Bayesian concept.  The idea is that essentially, if you have that your data is distributed according to an exponential family with parameter \(\eta \), then you can always (in theory) find another exponential family prior for \(\eta \) such that the posterior of \(\eta \) is another exponential family.  The argument goes like this:  let your data have some exponential family representation with natural parameters \(\eta \).</p>
 
-<script type="math/tex; mode=display">p(\mathbf{x} | \eta) = \prod_{i=1}^{N} h(x)exp(\eta^{T}\sum_{i=1}^{N}T(x) - NA(\eta))</script>
+<script type="math/tex; mode=display">p(\mathbf{x} | \eta) = \prod_{i=1}^{N} h(x_{i})exp(\eta^{T}\sum_{i=1}^{N}T(x_{i}) - NA(\eta))</script>
 
 <p>Then, define a prior for \(\eta \) with two hyperparameters \(\alpha, \beta \) to be</p>
 

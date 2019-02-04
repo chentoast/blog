@@ -4,7 +4,7 @@ author: Tony Chen
 title: Exponential Families
 ---
 
-For my first post, I thought I would start with a topic that forms the cornerstone of Bayesian Modeling, and unifies many far reaching ideas in statistics.
+For my first post, I thought I would start with a topic that forms the cornerstone of Bayesian Modeling, and unifies many far reaching ideas in statistics.  I'll introduce the concept, and go over just a few of their basic and nice properties.
 
 ## What are Exponential Families?
 
@@ -47,7 +47,7 @@ In the above two examples, we have rewritten two distributions in the exponentia
 $$ \eta = log(\frac{\pi}{1-\pi}) $$
 $$ \implies \mathbb{E}(X) = \pi = \frac{1}{e^{\eta} - 1} $$
 
-Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon lies at the heart of GeneraLized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.
+Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon lies at the heart of Generalized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.
 
 ## Sufficiency
 
@@ -71,7 +71,7 @@ $$p(x|\eta) = h(x)exp(\eta^{T}T(x) - A(\eta) $$
 
 $$ = h(x)g(\eta, T(x)) $$
 
-And so we have that \\(T(x) \\) is a sufficient statistic.  T(x) will play a very large role in the next inference for exponential families, which will up soon
+And so we have that \\(T(x) \\) is a sufficient statistic.  T(x) will play a very large role in the next inference for exponential families, which will come up soon.
 
 ## Moments
 
@@ -119,11 +119,11 @@ $$ \frac{\partial}{\partial \eta}l(\eta) = 0 = \sum_{i=1}^{N}T(x_{i}) - N\frac{\
 
 $$ \implies \frac{\partial }{\partial \eta}A(\eta) = \mathbb{E}(T(x)) = \frac{1}{N}\sum_{i=1}^{N}T(x_{i}) $$
 
-Thus, we have that the maximum likelihood estimate for \\(\eta \\) is simply the one that equations the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.
+Thus, we have that the maximum likelihood estimate for \\(\eta \\) is simply the one that equates the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.
 
 And finally, saving the best for the last, we have the property of conjugacy, which is a wholly Bayesian concept.  The idea is that essentially, if you have that your data is distributed according to an exponential family with parameter \\(\eta \\), then you can always (in theory) find another exponential family prior for \\(\eta \\) such that the posterior of \\(\eta \\) is another exponential family.  The argument goes like this:  let your data have some exponential family representation with natural parameters \\(\eta \\).
 
-$$p(\mathbf{x} | \eta) = \prod_{i=1}^{N} h(x)exp(\eta^{T}\sum_{i=1}^{N}T(x) - NA(\eta)) $$
+$$p(\mathbf{x} | \eta) = \prod_{i=1}^{N} h(x_{i})exp(\eta^{T}\sum_{i=1}^{N}T(x_{i}) - NA(\eta)) $$
 
 Then, define a prior for \\(\eta \\) with two hyperparameters \\(\alpha, \beta \\) to be
 
