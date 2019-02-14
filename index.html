@@ -5,8 +5,8 @@ title: Completely Random Measure
 <table class="post-listings" >
 {% for post in site.posts %}
 		<tr>
-			<td class="listing-date"><p >{{ post.date | date_to_string }}</p></td>
 			<td class="listing-title"><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></td>
+			<td class="listing-date"><p >{{ post.date | date_to_string }}</p></td>
 		</tr>
 {% endfor %}
 </table>

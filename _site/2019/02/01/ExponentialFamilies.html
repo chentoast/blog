@@ -3,10 +3,12 @@
 	<script type="text/javascript" async
   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
 	<meta charset="utf-8">
 	<title>Exponential Families</title>
 	<link rel="stylesheet" href="/blog/assets/css/main.css">
+	<link rel="stylesheet" href="/blog/assets/css/syntax.css">
 	<div class="header">
 		<hr style="border-top:5px solid black;">
 		<h1 ><a href="/blog/">Completely Random Measure</a></h1>
@@ -16,11 +18,11 @@
 
 	<body>
 		<div class="post-contents">
-	<h2 style="text-align:center;margin-top:50px;margin-bottom:0px;">Exponential Families</h2>
+	<h2 style="text-align:center;margin-top:50px;margin-bottom:5%;">Exponential Families</h2>
 	<h4 style="text-align:center;margin-top:0px;margin-bottom:0px;">Tony Chen</h4>
 	<h4 style="text-align:center;margin-top:0px;margin-bottom:50px;">01 Feb 2019</h4>
 	<div class="post">
-		<p>For my first post, I thought I would start with a topic that forms the cornerstone of Bayesian Modeling, and unifies many far reaching ideas in statistics.  I’ll introduce the concept, and go over just a few of their basic and nice properties.</p>
+		<p>For my first notebook, I thought I would start with the Exponential Family, which is one of the foundations for both Bayesian and Frequentist statistics.  The range of topics spanned by the study of Exponential Families is extremely broad, which means that if you really study Exponential Families in great detail, you’ll end up learning a ton about statistics in general. In that sense, Exponential Families are worth their weight in gold, which is why I thought this would be a good starting point.  Although they might look a bit abstract at first, it turns out that they have many incredibly rich and useful properties that make them desirable for applications.</p>
 
 <h2 id="what-are-exponential-families">What are Exponential Families?</h2>
 
@@ -28,7 +30,7 @@
 
 <script type="math/tex; mode=display">p(x|\eta) = h(x)exp(\eta^{T}T(x) - A(\eta)</script>
 
-<p>In the above equation, \(\eta \) is commonly referred to as the canonical parameter, T(x) is called the sufficient statistic, and \(A(\eta) \) is referred to as the log normalizer, as it is the term that ensures that the density integrates to 1.  It turns out that a ton of very commonly used distributions (poisson, multinomial, dirichlet, beta, etc) can be written in this form.</p>
+<p>In the above equation, \(\eta \) is commonly referred to as the canonical parameter, T(x) is called the sufficient statistic, and \(A(\eta) \) is referred to as the log normalizer, as it is the term that ensures that the density integrates to 1.  As it turns out, a ton of very commonly used distributions (poisson, multinomial, dirichlet, beta, etc) can be written in this form.</p>
 
 <h2 id="examples-the-bernoulli-and-gaussian-distributions">Examples: the Bernoulli and Gaussian distributions</h2>
 
@@ -63,11 +65,11 @@
 <p><script type="math/tex">\eta = log(\frac{\pi}{1-\pi})</script>
 <script type="math/tex">\implies \mathbb{E}(X) = \pi = \frac{1}{e^{\eta} - 1}</script></p>
 
-<p>Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon lies at the heart of Generalized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.</p>
+<p>Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon is what lies at the heart of Generalized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.</p>
 
 <h2 id="sufficiency">Sufficiency</h2>
 
-<p>At the very beginning, I mentioned that T(x) is what’s known as a sufficient statistic.  But what does that mean?  The concept of sufficiency is a rich and deep subject, and I won’t be able to cover all of it today, although I probably will try to in a future post.  However, I will give a quick introduction, because sufficiency and exponential families are very closely related.  The idea of sufficiency is grounded in the concept of data reduction.  How much can we reduce our data, without losing any key information?  Lets start with a couple of definitions.</p>
+<p>At the very beginning, I mentioned that T(x) is what’s known as a sufficient statistic.  But what does that mean?  The concept of sufficiency is an incredibly rich subject, and I won’t be able to cover all of it today, although I probably will try to in a future post.  However, I will give a quick introduction.  The idea of sufficiency is grounded in the concept of data reduction.  How much can we reduce our data, without losing any key information?  Lets start with a couple of definitions.</p>
 
 <p><strong>Def</strong>.  A <strong>statistic</strong> is any function of our data \( (x_{1}, x_{2}, \ldots) \).  The easiest example to give would be the sample mean: \( \overline{x} = \sum_{i=1}^{N} x_{i} \).</p>
 
@@ -87,7 +89,7 @@
 
 <script type="math/tex; mode=display">= h(x)g(\eta, T(x))</script>
 
-<p>And so we have that \(T(x) \) is a sufficient statistic.  T(x) will play a very large role in the next inference for exponential families, which will come up soon.</p>
+<p>And so we have that \(T(x) \) is a sufficient statistic.  With respect to exponential families, \(T(x) \) has a variety of uses and interpretations, however the primary one that I will focus one, is the part that it plays in inference.</p>
 
 <h2 id="moments">Moments</h2>
 
@@ -117,15 +119,13 @@
 
 <script type="math/tex; mode=display">= \mathbb{E}(T(x)T(x)^{T}) - \mathbb{E}(T(x))\mathbb{E}(T(x))^{T} = Var(T(x))</script>
 
-<p>I guess since the second derivative is the variance instead of the second moment, it should technically be called a cumulant generating function instead.  This property of exponential families was always one of the most bizzare to me, since I always found it weird how some throwaway normalizing term could generate moments like that.</p>
-
 <h2 id="inference">Inference</h2>
 
-<p>Arguably, the most important property of exponential families are how nicely they play with inference, and are a big reason why they are studied so much.  Lets start by looking at a frequentist MLE for the natural parameters.  First, lets look at the distribution of the data.</p>
+<p>Arguably, the most important property of exponential families are how nicely they play with inference.  Lets start by looking at a frequentist MLE for the natural parameters.  First, lets look at the distribution of the data.</p>
 
 <script type="math/tex; mode=display">p(\mathbf{x} |\eta) = \prod_{i=1}^{N} h(x_{i}) = \prod_{i=1}^{N}h(x_{i}) exp(\eta^{T}(\sum_{i=1}^{N}T(x_{i})) - NA(\eta))</script>
 
-<p>Thus, we can see that the joint distribution of our data, is also an exponential family distribution, which is nice property 1.  Lets go ahead and take the log of this, to derive our log likelihood</p>
+<p>Thus, we can see that the joint distribution of our data, is also an exponential family distribution with updated sufficient statistics.  Lets go ahead and take the log of this, to derive our log likelihood</p>
 
 <script type="math/tex; mode=display">l(\eta) = \sum_{i=1}^{N} h(x_{i}) + \eta^{T}\sum_{i=1}^{N}T(x_{i}) - NA(\eta)</script>
 
@@ -135,9 +135,9 @@
 
 <script type="math/tex; mode=display">\implies \frac{\partial }{\partial \eta}A(\eta) = \mathbb{E}(T(x)) = \frac{1}{N}\sum_{i=1}^{N}T(x_{i})</script>
 
-<p>Thus, we have that the maximum likelihood estimate for \(\eta \) is simply the one that equates the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.</p>
+<p>Thus, we have that the maximum likelihood estimate for \(\eta \) is simply the one that equates the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.  I won’t derive it here, but its decently simple to show that this MLE is both unbiased and efficient - that is, it achieves the Cramer Rao Lower Bound.</p>
 
-<p>And finally, saving the best for the last, we have the property of conjugacy, which is a wholly Bayesian concept.  The idea is that essentially, if you have that your data is distributed according to an exponential family with parameter \(\eta \), then you can always (in theory) find another exponential family prior for \(\eta \) such that the posterior of \(\eta \) is another exponential family.  The argument goes like this:  let your data have some exponential family representation with natural parameters \(\eta \).</p>
+<p>Finally, we have the property of conjugacy.  The idea is that essentially, if you have that your data is distributed according to an exponential family with parameter \(\eta \), then you can always (in theory) find another exponential family prior for \(\eta \) such that the posterior of \(\eta \) is another exponential family.  The argument goes like this:  let your data have some exponential family representation with natural parameters \(\eta \).</p>
 
 <script type="math/tex; mode=display">p(\mathbf{x} | \eta) = \prod_{i=1}^{N} h(x_{i})exp(\eta^{T}\sum_{i=1}^{N}T(x_{i}) - NA(\eta))</script>
 

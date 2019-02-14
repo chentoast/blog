@@ -4,7 +4,7 @@ author: Tony Chen
 title: Exponential Families
 ---
 
-For my first post, I thought I would start with a topic that forms the cornerstone of Bayesian Modeling, and unifies many far reaching ideas in statistics.  I'll introduce the concept, and go over just a few of their basic and nice properties.
+For my first notebook, I thought I would start with the Exponential Family, which is one of the foundations for both Bayesian and Frequentist statistics.  The range of topics spanned by the study of Exponential Families is extremely broad, which means that if you really study Exponential Families in great detail, you'll end up learning a ton about statistics in general. In that sense, Exponential Families are worth their weight in gold, which is why I thought this would be a good starting point.  Although they might look a bit abstract at first, it turns out that they have many incredibly rich and useful properties that make them desirable for applications.
 
 ## What are Exponential Families?
 
@@ -12,7 +12,7 @@ An Exponential Family is a class of distributions that can be written in the fol
 
 $$p(x|\eta) = h(x)exp(\eta^{T}T(x) - A(\eta) $$
 
-In the above equation, \\(\eta \\) is commonly referred to as the canonical parameter, T(x) is called the sufficient statistic, and \\(A(\eta) \\) is referred to as the log normalizer, as it is the term that ensures that the density integrates to 1.  It turns out that a ton of very commonly used distributions (poisson, multinomial, dirichlet, beta, etc) can be written in this form.
+In the above equation, \\(\eta \\) is commonly referred to as the canonical parameter, T(x) is called the sufficient statistic, and \\(A(\eta) \\) is referred to as the log normalizer, as it is the term that ensures that the density integrates to 1.  As it turns out, a ton of very commonly used distributions (poisson, multinomial, dirichlet, beta, etc) can be written in this form.
 
 ## Examples: the Bernoulli and Gaussian distributions
 
@@ -47,11 +47,11 @@ In the above two examples, we have rewritten two distributions in the exponentia
 $$ \eta = log(\frac{\pi}{1-\pi}) $$
 $$ \implies \mathbb{E}(X) = \pi = \frac{1}{e^{\eta} - 1} $$
 
-Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon lies at the heart of Generalized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.
+Here we see a familiar function: it turns out that the canonical parameter of the bernoulli is linked to the mean through the logit function.  This phenomenon is what lies at the heart of Generalized Linear Models; many times, the link function of a GLM turns out to be the canonical link between the canonical parameter and the mean.  In our case, we have rediscovered the link function of logistic regression.
 
 ## Sufficiency
 
-At the very beginning, I mentioned that T(x) is what's known as a sufficient statistic.  But what does that mean?  The concept of sufficiency is a rich and deep subject, and I won't be able to cover all of it today, although I probably will try to in a future post.  However, I will give a quick introduction, because sufficiency and exponential families are very closely related.  The idea of sufficiency is grounded in the concept of data reduction.  How much can we reduce our data, without losing any key information?  Lets start with a couple of definitions.
+At the very beginning, I mentioned that T(x) is what's known as a sufficient statistic.  But what does that mean?  The concept of sufficiency is an incredibly rich subject, and I won't be able to cover all of it today, although I probably will try to in a future post.  However, I will give a quick introduction.  The idea of sufficiency is grounded in the concept of data reduction.  How much can we reduce our data, without losing any key information?  Lets start with a couple of definitions.
 
 __Def__.  A __statistic__ is any function of our data \\( (x_{1}, x_{2}, \ldots) \\).  The easiest example to give would be the sample mean: \\( \overline{x} = \sum_{i=1}^{N} x_{i} \\).
 
@@ -71,7 +71,7 @@ $$p(x|\eta) = h(x)exp(\eta^{T}T(x) - A(\eta) $$
 
 $$ = h(x)g(\eta, T(x)) $$
 
-And so we have that \\(T(x) \\) is a sufficient statistic.  T(x) will play a very large role in the next inference for exponential families, which will come up soon.
+And so we have that \\(T(x) \\) is a sufficient statistic.  With respect to exponential families, \\(T(x) \\) has a variety of uses and interpretations, however the primary one that I will focus one, is the part that it plays in inference.
 
 ## Moments
 
@@ -101,15 +101,13 @@ $$ = \mathbb{E}(T(x)T(x)^{T} - T(x)\mathbb{E}(T(x))^{T} ) $$
 
 $$ = \mathbb{E}(T(x)T(x)^{T}) - \mathbb{E}(T(x))\mathbb{E}(T(x))^{T} = Var(T(x)) $$
 
-I guess since the second derivative is the variance instead of the second moment, it should technically be called a cumulant generating function instead.  This property of exponential families was always one of the most bizzare to me, since I always found it weird how some throwaway normalizing term could generate moments like that.
-
 ## Inference
 
-Arguably, the most important property of exponential families are how nicely they play with inference, and are a big reason why they are studied so much.  Lets start by looking at a frequentist MLE for the natural parameters.  First, lets look at the distribution of the data.
+Arguably, the most important property of exponential families are how nicely they play with inference.  Lets start by looking at a frequentist MLE for the natural parameters.  First, lets look at the distribution of the data.
 
 $$p(\mathbf{x} |\eta) = \prod_{i=1}^{N} h(x_{i}) = \prod_{i=1}^{N}h(x_{i}) exp(\eta^{T}(\sum_{i=1}^{N}T(x_{i})) - NA(\eta)) $$
 
-Thus, we can see that the joint distribution of our data, is also an exponential family distribution, which is nice property 1.  Lets go ahead and take the log of this, to derive our log likelihood
+Thus, we can see that the joint distribution of our data, is also an exponential family distribution with updated sufficient statistics.  Lets go ahead and take the log of this, to derive our log likelihood
 
 $$ l(\eta) = \sum_{i=1}^{N} h(x_{i}) + \eta^{T}\sum_{i=1}^{N}T(x_{i}) - NA(\eta) $$
 
@@ -119,9 +117,9 @@ $$ \frac{\partial}{\partial \eta}l(\eta) = 0 = \sum_{i=1}^{N}T(x_{i}) - N\frac{\
 
 $$ \implies \frac{\partial }{\partial \eta}A(\eta) = \mathbb{E}(T(x)) = \frac{1}{N}\sum_{i=1}^{N}T(x_{i}) $$
 
-Thus, we have that the maximum likelihood estimate for \\(\eta \\) is simply the one that equates the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.
+Thus, we have that the maximum likelihood estimate for \\(\eta \\) is simply the one that equates the expectation of the sufficient statistic with the sample mean of the sufficient statistic.  For distributions such as the bernoulli or poisson, where the sufficient statistic is simply x itself, this implies that the MLE of the parameter is simply the sample mean.  I won't derive it here, but its decently simple to show that this MLE is both unbiased and efficient - that is, it achieves the Cramer Rao Lower Bound.
 
-And finally, saving the best for the last, we have the property of conjugacy, which is a wholly Bayesian concept.  The idea is that essentially, if you have that your data is distributed according to an exponential family with parameter \\(\eta \\), then you can always (in theory) find another exponential family prior for \\(\eta \\) such that the posterior of \\(\eta \\) is another exponential family.  The argument goes like this:  let your data have some exponential family representation with natural parameters \\(\eta \\).
+Finally, we have the property of conjugacy.  The idea is that essentially, if you have that your data is distributed according to an exponential family with parameter \\(\eta \\), then you can always (in theory) find another exponential family prior for \\(\eta \\) such that the posterior of \\(\eta \\) is another exponential family.  The argument goes like this:  let your data have some exponential family representation with natural parameters \\(\eta \\).
 
 $$p(\mathbf{x} | \eta) = \prod_{i=1}^{N} h(x_{i})exp(\eta^{T}\sum_{i=1}^{N}T(x_{i}) - NA(\eta)) $$
 
