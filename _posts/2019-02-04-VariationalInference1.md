@@ -6,7 +6,13 @@ title: Variational Inference Part 1&#58; Introduction and Coordinate Ascent
 
 The biggest challenge of Bayesian Statistics lies in inference, where one combines the prior and likelihood to get a posterior.  Most of the time, the posterior will not have an analytic form and so we have to rely on sampling methods such as MCMC.  However, MCMC can be very computationally expensive, and in the age of big data, there is a lot of attention being directed towards developing new inference algorithms that could scale well to large datasets.  In the last couple of years, Variational Inference has become a viable and scaleable alternative to MCMC for performing inference on complex Bayesian models.  In this notebook, I'll present the basic math underlying the mechanics of Variational Inference, and also present it in its most simple form: Coordinate Ascent Variational Inference.  I'll end with a practical example, showing how to apply Coordinate Ascent Variational Inference to a Mixture of Gaussians model.  My derivations will be following [(Blei 2016)](https://arxiv.org/abs/1601.00670) very closely.
 
-## Introduction and the Problem
+1. [Introduction and the Problem](#intro)
+2. [Statement of the objective](#objective)
+3. [The ELBO](#elbo)
+4. [The mean field assumption and coordinate ascent](#cavi)
+5. [Example: Mixture of Gaussians](#gmm)
+
+## Introduction and the Problem <a name="intro"></a>
 
 Recall Bayes rule, which gives us the procedure for drawing inferences from data:
 
@@ -16,7 +22,7 @@ The term in the denominator is often referred to as the marginal likelihood, or 
 
 Variational Inference, or VI, belongs to a class of inference algorithms referred to as approximate inference, which is designed to get around this problem in a different way from MCMC.  The idea is that instead of drawing samples from the exact posterior, such as MCMC, you trade off a little bit of bias in exchange for computational tractability.  As such, these approximate inference methods transform inference from a sampling problem, to an optimization problem, which is typically much more tractable and easier to deal with.  VI is just one of the approximate sampling algorithms, but it has been the one that has seen the most success and has been the most widely adopted.
 
-## Statement of the objective
+## Statement of the objective <a name="objective"></a>
 
 Like previously stated, VI transforms inference from a sampling problem into a optimization problem.  It does this by approximating the posterior \\(p(\theta \vert x) \\) with some class of distributions Q parameterized by what we call "variational parameters" \\(\xi \\).  Note that the dimension of \\(\xi \\) depends on what variational distribution we choose. Then, we want to find \\(\xi \\) such that our variational distribution \\(q(\theta \vert \xi)\\) is "close" to the posterior.  I'll go ahead and note here that technically, our variational distribution is a function of x; the exact notation should probably be \\(q(\theta \vert \xi(x) \\)), but you'll often see \\(q(\theta) \text{ or } q(\theta \vert \xi) \\) for brevity. Going back to the problem of defining "closeness", the canonical measure that is used is the KL Divergence.  Recall that for two distributions p, q, the KL divergence is defined as:
 
@@ -43,7 +49,7 @@ We can see that the undesirable term, \\(p(x) \\) pops up again in this equation
 
 What can we do from here?  The way forward is to note that since \\(p(x) \\) is a constant with respect to theta, we can drop it from the whole term and minimize the KL divergence up to an additive constant.
 
-## The ELBO
+## The ELBO <a name="elbo"></a>
 
 Define the Evidence Lower Bound (ELBO) as
 
@@ -65,7 +71,7 @@ Here, the above inequality followed from application of Jensen's inequality.
 
 Thus, we have formulated a tractable variational objective: find the distribution \\(q(\theta \vert \xi) \in Q \\) that maximizes the ELBO, which will in turn minimize the KL divergence between \\(q \\) and the posterior.
 
-## The Mean Field Assumption and the Coordinate Ascent Updates
+## The Mean Field Assumption and the Coordinate Ascent Updates <a name="cavi"></a>
 
 Now that we have the function we want to maximize, the next step is to figure out how to actually maximize this thing.  The easiest, and arguably simplest way, is to apply coordinate ascent, where we maximize with respect to one variable at each sweep, holding all others constant.  Lets start by clarifying my notation.  Let \\(\theta \\) be the vector of all parameters, and \\(\theta_{j} \\) be the jth parameter in the parameter vector.  Similarly, let \\(\mathbf{x} \\) be the vector of observed data and \\(x_{i} \\) be the ith datapoint.  Let \\(-j \\) denote everything except for j.  For example, $$\mathbb{E}_{-j} [\mathbf{ \theta_{-j}}] $$ would represent the expectation of all of the theta parameters, except for the jth one.  With all that out of the way, lets get started.
 
@@ -103,7 +109,7 @@ We can see that this takes the form of the negative KL Divergence between $$q(\t
 
 At this point, lets stop, take a deep breath, and recap our algorithm.  At each iteration, set each variational parameter proportional to $$ \exp(\mathbb{E}_{-j}[log\, p(\theta_{j}, \theta_{-j}, \mathbf{x})) $$.  Then, calculate the ELBO $$\mathbb{E}[log\, p(\theta,x)] - \mathbb{E}[log\, q(\theta)]  $$.  Repeat until convergence.  Now that we've gone through the mechanics of how Coordinate Ascent Variational Inference works, lets go ahead and see a few examples.
 
-## Example 1: Mixture of Gaussians
+## Example: Mixture of Gaussians <a name="gmm"></a>
 
 Consider a classic mixture model with K components, that has this setup:
 
@@ -254,18 +260,23 @@ And here is the code to fit the mixture model
 		# The ELBO
 		t1 = -(2*sigma_sq)**(-1)*(m**2 + s2).sum() + .5*torch.log(s2).sum()
 		t2 = -.5 * torch.matmul(phi, x**2).sum() + (phi*torch.ger(m, x)).sum() \
-				-.5*(torch.transpose(phi, 0, 1)*(m**2 + s2)).sum() - (phi*torch.log(phi)).sum()
-		return t1 + t2
+				-.5*(torch.transpose(phi, 0, 1)*(m**2 + s2)).sum()
+		t3 = torch.log(phi)
+		t3[t3 == float("-Inf")] = 0 # Prevent underflow
+		t3 = - (phi*t3).sum()
+		return t1 + t2 + t3
 
 	def fit(data, k, sigma_sq, num_iter = 2000):
 		n = len(data)
+		
 		# Randomly initialize the parameters
 		m = torch.distributions.MultivariateNormal(torch.zeros(k), torch.eye(k)).sample()
 		s2 = torch.tensor([torch.distributions.Exponential(5).sample() for _ in range(0,k)])
 		phi = torch.zeros((k,n), dtype=torch.float32)
-		elbo = torch.zeros(num_iter)
+		elbo = torch.zeros(num_iter)	
 		for i in range(0, n):
 			phi[:,i] = torch.distributions.Dirichlet(torch.from_numpy(np.repeat(1.0,k))).sample().float()
+		
 		for j in range(0, num_iter):
 			phi = update_phi(m, s2, data)
 			m = update_m(data, phi, sigma_sq)
@@ -285,8 +296,14 @@ And here is the code to fit the mixture model
 	sns.distplot(list(torch.distributions.Normal(loc=out[1][0], scale=1).sample((1000,))), kde=True, hist=False)
 	sns.distplot(list(torch.distributions.Normal(loc=out[1][1], scale=1).sample((1000,))), kde=True, hist=False)
 	sns.distplot(list(torch.distributions.Normal(loc=out[1][2], scale=1).sample((1000,))), kde=True, hist=False)
-
+	plt.show()
+	
+	plt.plot(list(out[3][0:100]))
+	plt.ylabels("ELBO")
+	plt.show()
 ```
 
 ![Fitted model](/blog/assets/images/gmm_fit.png)
+
+![ELBO](/blog/assets/images/elbo.png)
 

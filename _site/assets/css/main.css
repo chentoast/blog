@@ -1,12 +1,46 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
+@keyframes fadein {
+	from {opacity: 0;}
+	to {opacity: 1;}
+}
+
 * {
 	font-family:"Roboto", "Georgia","Times New Roman";
+	background-color:whitesmoke;
 }
+
+a {
+	color:black;
+	text-decoration:none;
+}
+
+a:hover {
+	text-decoration:underline;
+}
+
+/* a.underline:hover { */
+/* 	text-decoration:none; */
+/* } */
+
+/* a.underline:after { */
+/* 	content: ''; */
+/* 	display:block; */
+/* 	margin:auto; */
+/* 	height:1px; */
+/* 	width:0px; */
+/* 	background:transparent; */
+/* 	transition: width .5s ease, background-color .5s ease; */
+/* } */
+
+/* a.underline:hover:after { */
+/* 	width:20%; */
+/* 	background:lightgray; */
+/* } */
 
 .header {
 	padding-top: 5%;
-	width:40%;
+	width:60%;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center !important;
@@ -16,6 +50,8 @@
 	width:60%;
 	margin-left:auto;
 	margin-right:auto;
+	animation-name: fadein;
+	animation-duration: 4s;
 }
 
 .listing-date {
@@ -47,6 +83,15 @@
 .post h2 {
 	font-size:20px;
 	text-decoration:underline;
+	text-align:center;
+}
+
+.post a {
+	color:royalblue;
+}
+
+.post img {
+	border: 1px solid skyblue;
 }
 
 .footer {
@@ -54,7 +99,7 @@
 	margin-top: 5%;
 	margin-left: auto;
 	margin-right: auto;
-	width: 40%;
+	width: 60%;
 	text-align: center; 
 }
 
@@ -66,19 +111,6 @@
 	width:500px;
 }
 
-li {
-	list-style-type: none;
-	text-align: center;
-}
-
-a {
-	color:black;
-	text-decoration:none;
-}
-
-a:hover {
-	text-decoration:underline;
-}
 
 td {
 	word-wrap:break-word;
@@ -97,6 +129,11 @@ table {
 .highlight pre {
 	overflow-x:auto;
 	overflow-y:hidden;
+	border:1px solid lightskyblue;
+	padding-left:5%;
+	padding-right:5%;
+	padding-top:5%;
+	padding-bottom:5%;
 }
 
 .mjx-chtml.MJXc-display {
@@ -124,7 +161,13 @@ table {
 	.post-contents {
 		margin-left:auto;
 		margin-right:auto;
-		width:100%;
+		overflow-x:wrap;
+		width:95%;
+		max-width:100%;
 		text-align:center;
+	}
+	
+	.highlight {
+		text-align:left;
 	}
 }

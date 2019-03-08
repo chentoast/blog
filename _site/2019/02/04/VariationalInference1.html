@@ -11,9 +11,9 @@
 	<link rel="stylesheet" href="/blog/assets/css/syntax.css">
 	<meta name="description" content="A series of notebooks on topics in machine learning and statistics.">
 	<div class="header">
-		<hr style="border-top:5px solid black;">
+		<!-- <hr style="border-top:5px solid black;"> -->
 		<h1 ><a href="/blog/">Completely Random Measure</a></h1>
-		<hr>
+		<hr style="border-color:mintcream;">
 	</div>
 </head>
 
@@ -25,7 +25,15 @@
 	<div class="post">
 		<p>The biggest challenge of Bayesian Statistics lies in inference, where one combines the prior and likelihood to get a posterior.  Most of the time, the posterior will not have an analytic form and so we have to rely on sampling methods such as MCMC.  However, MCMC can be very computationally expensive, and in the age of big data, there is a lot of attention being directed towards developing new inference algorithms that could scale well to large datasets.  In the last couple of years, Variational Inference has become a viable and scaleable alternative to MCMC for performing inference on complex Bayesian models.  In this notebook, I’ll present the basic math underlying the mechanics of Variational Inference, and also present it in its most simple form: Coordinate Ascent Variational Inference.  I’ll end with a practical example, showing how to apply Coordinate Ascent Variational Inference to a Mixture of Gaussians model.  My derivations will be following <a href="https://arxiv.org/abs/1601.00670">(Blei 2016)</a> very closely.</p>
 
-<h2 id="introduction-and-the-problem">Introduction and the Problem</h2>
+<ol>
+  <li><a href="#intro">Introduction and the Problem</a></li>
+  <li><a href="#objective">Statement of the objective</a></li>
+  <li><a href="#elbo">The ELBO</a></li>
+  <li><a href="#cavi">The mean field assumption and coordinate ascent</a></li>
+  <li><a href="#gmm">Example: Mixture of Gaussians</a></li>
+</ol>
+
+<h2 id="introduction-and-the-problem-">Introduction and the Problem <a name="intro"></a></h2>
 
 <p>Recall Bayes rule, which gives us the procedure for drawing inferences from data:</p>
 
@@ -35,7 +43,7 @@
 
 <p>Variational Inference, or VI, belongs to a class of inference algorithms referred to as approximate inference, which is designed to get around this problem in a different way from MCMC.  The idea is that instead of drawing samples from the exact posterior, such as MCMC, you trade off a little bit of bias in exchange for computational tractability.  As such, these approximate inference methods transform inference from a sampling problem, to an optimization problem, which is typically much more tractable and easier to deal with.  VI is just one of the approximate sampling algorithms, but it has been the one that has seen the most success and has been the most widely adopted.</p>
 
-<h2 id="statement-of-the-objective">Statement of the objective</h2>
+<h2 id="statement-of-the-objective-">Statement of the objective <a name="objective"></a></h2>
 
 <p>Like previously stated, VI transforms inference from a sampling problem into a optimization problem.  It does this by approximating the posterior \(p(\theta \vert x) \) with some class of distributions Q parameterized by what we call “variational parameters” \(\xi \).  Note that the dimension of \(\xi \) depends on what variational distribution we choose. Then, we want to find \(\xi \) such that our variational distribution \(q(\theta \vert \xi)\) is “close” to the posterior.  I’ll go ahead and note here that technically, our variational distribution is a function of x; the exact notation should probably be \(q(\theta \vert \xi(x) \)), but you’ll often see \(q(\theta) \text{ or } q(\theta \vert \xi) \) for brevity. Going back to the problem of defining “closeness”, the canonical measure that is used is the KL Divergence.  Recall that for two distributions p, q, the KL divergence is defined as:</p>
 
@@ -61,7 +69,7 @@
 
 <p>What can we do from here?  The way forward is to note that since \(p(x) \) is a constant with respect to theta, we can drop it from the whole term and minimize the KL divergence up to an additive constant.</p>
 
-<h2 id="the-elbo">The ELBO</h2>
+<h2 id="the-elbo-">The ELBO <a name="elbo"></a></h2>
 
 <p>Define the Evidence Lower Bound (ELBO) as</p>
 
@@ -83,7 +91,7 @@
 
 <p>Thus, we have formulated a tractable variational objective: find the distribution \(q(\theta \vert \xi) \in Q \) that maximizes the ELBO, which will in turn minimize the KL divergence between \(q \) and the posterior.</p>
 
-<h2 id="the-mean-field-assumption-and-the-coordinate-ascent-updates">The Mean Field Assumption and the Coordinate Ascent Updates</h2>
+<h2 id="the-mean-field-assumption-and-the-coordinate-ascent-updates-">The Mean Field Assumption and the Coordinate Ascent Updates <a name="cavi"></a></h2>
 
 <p>Now that we have the function we want to maximize, the next step is to figure out how to actually maximize this thing.  The easiest, and arguably simplest way, is to apply coordinate ascent, where we maximize with respect to one variable at each sweep, holding all others constant.  Lets start by clarifying my notation.  Let \(\theta \) be the vector of all parameters, and \(\theta_{j} \) be the jth parameter in the parameter vector.  Similarly, let \(\mathbf{x} \) be the vector of observed data and \(x_{i} \) be the ith datapoint.  Let \(-j \) denote everything except for j.  For example, <script type="math/tex">\mathbb{E}_{-j} [\mathbf{ \theta_{-j}}]</script> would represent the expectation of all of the theta parameters, except for the jth one.  With all that out of the way, lets get started.</p>
 
@@ -121,7 +129,7 @@
 
 <p>At this point, lets stop, take a deep breath, and recap our algorithm.  At each iteration, set each variational parameter proportional to <script type="math/tex">\exp(\mathbb{E}_{-j}[log\, p(\theta_{j}, \theta_{-j}, \mathbf{x}))</script>.  Then, calculate the ELBO <script type="math/tex">\mathbb{E}[log\, p(\theta,x)] - \mathbb{E}[log\, q(\theta)]</script>.  Repeat until convergence.  Now that we’ve gone through the mechanics of how Coordinate Ascent Variational Inference works, lets go ahead and see a few examples.</p>
 
-<h2 id="example-1-mixture-of-gaussians">Example 1: Mixture of Gaussians</h2>
+<h2 id="example-mixture-of-gaussians-">Example: Mixture of Gaussians <a name="gmm"></a></h2>
 
 <p>Consider a classic mixture model with K components, that has this setup:</p>
 
@@ -270,18 +278,23 @@
 		<span class="c1"># The ELBO
 </span>		<span class="n">t1</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigma_sq</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">s2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span> <span class="o">+</span> <span class="mf">.5</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
 		<span class="n">t2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">phi</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">ger</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span> \
-				<span class="o">-</span><span class="mf">.5</span><span class="o">*</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">s2</span><span class="p">))</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="n">phi</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
-		<span class="k">return</span> <span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span>
+				<span class="o">-</span><span class="mf">.5</span><span class="o">*</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">s2</span><span class="p">))</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+		<span class="n">t3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+		<span class="n">t3</span><span class="p">[</span><span class="n">t3</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s">"-Inf"</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Prevent underflow
+</span>		<span class="n">t3</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">phi</span><span class="o">*</span><span class="n">t3</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span> <span class="o">+</span> <span class="n">t3</span>
 
 	<span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">sigma_sq</span><span class="p">,</span> <span class="n">num_iter</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">):</span>
 		<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+		
 		<span class="c1"># Randomly initialize the parameters
 </span>		<span class="n">m</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 		<span class="n">s2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Exponential</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">k</span><span class="p">)])</span>
 		<span class="n">phi</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-		<span class="n">elbo</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_iter</span><span class="p">)</span>
+		<span class="n">elbo</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_iter</span><span class="p">)</span>	
 		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 			<span class="n">phi</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Dirichlet</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">k</span><span class="p">)))</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span><span class="o">.</span><span class="nb">float</span><span class="p">()</span>
+		
 		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_iter</span><span class="p">):</span>
 			<span class="n">phi</span> <span class="o">=</span> <span class="n">update_phi</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 			<span class="n">m</span> <span class="o">=</span> <span class="n">update_m</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">sigma_sq</span><span class="p">)</span>
@@ -300,10 +313,16 @@
 	<span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">1000</span><span class="p">,))),</span> <span class="n">kde</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 	<span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">1000</span><span class="p">,))),</span> <span class="n">kde</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 	<span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">1000</span><span class="p">,))),</span> <span class="n">kde</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-
+	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+	
+	<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">100</span><span class="p">]))</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">ylabels</span><span class="p">(</span><span class="s">"ELBO"</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p><img src="/blog/assets/images/gmm_fit.png" alt="Fitted model" /></p>
+
+<p><img src="/blog/assets/images/elbo.png" alt="ELBO" /></p>
 
 
 	</div>
@@ -311,7 +330,7 @@
 
 	<footer>
 	<div class="footer">
-		<hr style="color:gray">
+		<hr style="border-color:mintcream;">
 		<a style="display:block;" href="https://http://localhost:4000"/>about</a>
 	</div>
 </footer>
