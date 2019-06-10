@@ -325,17 +325,5 @@ def main(doc_term, K, num_iter, eta, alpha, tau, kappa):
             lambd = step_lambda(lambd, rho, lambda_hat)
             rho = step_rho(tau, kappa, t)
     return (gamma, phi, lambd)
-
-def log_likelihood(doc_term, gamma, lambd, phi):
-    D, V = doc_term.shape
-    z = np.empty((D, V))
-    log_likelihood = 0
-    for d in range(D):
-        phi_d = phi[d, :, :]
-        n = doc_term.iloc[d, :].sum()
-        z = np.argmax(phi_d, axis=1) # MAP topic assignments
-        probs = lambd[tuple(zip(z, range(V)))] # Extract lambda_{z_{dn}, v}
-        log_likelihood += ss.multinomial(probs).logpmf(doc_term[d, :])
-    return log_likelihood
 ```
 
