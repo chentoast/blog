@@ -19,7 +19,7 @@ For my first notebook, I thought I would start with the Exponential Family, whic
 
 An Exponential Family is a class of distributions that can be written in the following form:
 
-$$p(x|\eta) = h(x)\exp(\eta^{T}T(x) - A(\eta) $$
+$$p(x|\eta) = h(x)\exp(\eta^{T}T(x) - A(\eta)) $$
 
 In the above equation, \\(\eta \\) is commonly referred to as the canonical parameter, T(x) is called the sufficient statistic, and \\(A(\eta) \\) is referred to as the log normalizer, as it is the term that ensures that the density integrates to 1.  As it turns out, a ton of very commonly used distributions (poisson, multinomial, dirichlet, beta, etc) can be written in this form.
 
@@ -50,7 +50,7 @@ From this, we can see that \\(h(x) = \frac{1}{\sqrt{2\pi}} \\), the canonical pa
 
 $$ A(\eta) = \frac{\mu^{2}}{2\sigma^{2}} - \log(\sigma) = -\frac{\eta_{1}^{2}}{4\eta_{2}} - \frac{log(-2\eta_{2})}{2} $$
 
-<a name="mean></a>
+<a name="mean"></a>
 ## The Mean Parameterization
 
 In the above two examples, we have rewritten two distributions in the exponential family representation, expressed in terms of these natural or canonical parameters \\(\eta \\).  However, many distributions are often instead parameterized by its mean, such as the normal, the bernoulli, and the poisson.  We would like to express the mean \\(\mu \\) in terms of the canonical parameters.  As it turns out, if we make some assumptions about linear independence and convexity, the relationship between the two is invertible, so we can recover \\(\mu \\) from the canonical parameters.  Take the bernoulli as an example.  We have that 
@@ -80,7 +80,7 @@ Pf.  Some other time.
 
 When we look at how the exponential family is written, we can see that
 
-$$p(x|\eta) = h(x)\exp(\eta^{T}T(x) - A(\eta) $$
+$$p(x|\eta) = h(x)\exp(\eta^{T}T(x) - A(\eta)) $$
 
 $$ = h(x)g(\eta, T(x)) $$
 
