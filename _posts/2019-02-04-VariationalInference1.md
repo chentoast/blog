@@ -4,7 +4,7 @@ author: Tony Chen
 title: Variational Inference Part 1&#58; Introduction and Coordinate Ascent
 ---
 
-The biggest challenge of Bayesian Statistics lies in model inference, where one combines the prior and likelihood to derive a posterior.  Most of the time, the posterior will not have an analytic form and so we have to rely on sampling methods such as MCMC.  However, MCMC can be very computationally expensive, and in the age of big data, there is a lot of attention being directed towards developing new inference algorithms that could scale well to large datasets.  In the last couple of years, Variational Inference has become a viable and scaleable alternative to MCMC for performing inference on complex Bayesian models.  In this notebook, I'll present the basic math underlying the mechanics of Variational Inference, and also present it in its most simple form: Coordinate Ascent Variational Inference.  I'll end with a practical example, showing how to apply Coordinate Ascent Variational Inference to a Mixture of Gaussians model.  My derivations will be following [(Blei 2016)](https://arxiv.org/abs/1601.00670) very closely.
+The biggest challenge of Bayesian Statistics lies in model inference, where one combines the prior and likelihood to derive a posterior.  Most of the time, the posterior will not have an analytic form and so we have to rely on sampling methods such as MCMC.  However, MCMC can be very computationally expensive, and in the age of big data, there is a lot of attention being directed towards developing new inference algorithms that could scale well to large datasets.  In the last couple of years, Variational Inference has become a viable and scaleable alternative to MCMC for performing inference on complex Bayesian models.  In this post, I'll present the basic math underlying the mechanics of Variational Inference, and also present it in its most simple form: Coordinate Ascent Variational Inference.  I'll end with a practical example, showing how to apply Coordinate Ascent Variational Inference to a Mixture of Gaussians model.  My derivations will be following [(Blei 2016)](https://arxiv.org/abs/1601.00670) very closely.
 
 1. [Introduction and the Problem](#intro)
 2. [Statement of the objective](#objective)
@@ -18,9 +18,9 @@ Recall Bayes rule, which gives us the procedure for drawing inferences from data
 
 $$p(\theta \vert D) = \frac{p(D \vert \theta)p(\theta)}{p(D)} $$
 
-The term in the denominator is often referred to as the marginal likelihood, or the evidence, and is what causes inference to be intractable.  This is because to calculate \\(p(D) \\), we have to integrate over all of our parameters:  \\(p(D) = \int_{\theta \in \Theta} p(D \vert \theta)p(\theta) \\).  Now if \\(\theta \\) is one dimensional this could work, but as the dimensionality of our parameter space increases, the computational power needed also increases exponentially, making this an unfeasible numerical computation.
+The term in the denominator is often referred to as the marginal likelihood, or the evidence, and is what causes inference to be intractable.  This is because to calculate \\(p(D) \\), we have to integrate over the space of all parameters:  \\(p(D) = \int_{\theta \in \Theta} p(D \vert \theta)p(\theta) \\).  Now if \\(\theta \\) is one dimensional this could work, but as the dimensionality of our parameter space increases, the number of computations needed also increases exponentially, making this an unfeasible numerical computation.
 
-Variational Inference, or VI, belongs to a class of inference algorithms referred to as approximate inference, which is designed to get around this problem in a different way from MCMC.  The idea is that instead of drawing samples from the exact posterior, such as MCMC, you trade off a little bit of bias in exchange for computational tractability.  As such, these approximate inference methods transform inference from a sampling problem, to an optimization problem, which is typically much more tractable and easier to deal with.  VI is just one of the approximate sampling algorithms, but it has been the one that has seen the most success and has been the most widely adopted.
+Variational Inference, or VI, belongs to a class of inference algorithms referred to as approximate inference, which is designed to get around this problem in a different way from MCMC.  The idea is that instead of drawing samples from the exact posterior, such as MCMC, you instead approximate the posterior, trading off a little bit of bias in exchange for computational tractability.  As such, these approximate inference methods transform inference from a sampling problem into an optimization problem, which is typically much more tractable and easier to deal with.  VI is just one of the approximate inference algorithms, but it has been the one that has seen the most success and has been the most widely adopted.
 
 ## Statement of the objective <a name="objective"></a>
 
@@ -32,9 +32,9 @@ Our objective then becomes
 
 $$\text{Find } q^{*}(\theta) = \underset{q \in Q}{argmin} KL(q(\theta) || p(\theta | x)) $$
 
-And then once we have found \\(q^{*}(\theta) \\), we we use that as our approximate posterior.  Again, I'll stress that theres an implicit \\(\xi \\) in the distribution q; so when I say to find the distribution that maximizes this quantity, I really mean find \\(\xi \\) that maximizes \\(KL(q(\theta \vert \xi) \vert\vert p(\theta \vert x)) \\).  
+And then once we have found \\(q^{*}(\theta) \\), we we use that as our approximate posterior.  Again, I'll stress that theres an implicit \\(\xi \\) that parameterizes our distribution q; so when I say to find the distribution that maximizes this quantity, I really mean find \\(\xi \\) that maximizes \\(KL(q(\theta \vert \xi) \vert\vert p(\theta \vert x)) \\).  
 
-Now that we have our objective, everything should be fine and dandy.  However, we run into a big problem when we actually try and solve this.  Lets go ahead expand out the definition of the KL divergence:
+However, we run into a big problem when we actually try and optimize this objective.  Lets go ahead expand out the definition of the KL divergence:
 
 
 $$KL(q(\theta) || p(\theta | x)) = \int q(\theta) \log\, \frac{q(\theta)}{p(\theta)} $$
@@ -55,7 +55,9 @@ Define the Evidence Lower Bound (ELBO) as
 
 $$ELBO(q) = \mathbb{E}[\log\, p(\theta,x)] - \mathbb{E}[\log\, q(\theta)] $$
 
-Where the expectations are taken with respect to q.  It is imperative, that you keep track of what expectations are being taken with respect to which distributions and what variables.  If you don't have a solid grasp of this, then all of these next few derivations are going to be extremely hard.  It might seem a bit weird to be taking the expectation of a distribution, but here its just easier to think of \\( p(\mathbf{\theta}, x)\\) as some function of \\(\theta \\) with x held fixed.  We can see that the EBLO is simply the negative KL divergence plus some additive constant.  Thus, maximizing the ELBO will minimize the KL divergence, which will then give us the variational distribution that we want.  Furthermore, because we have dropped the intractable constant, we can actually compute the ELBO.  
+Where the expectations are taken with respect to q. It might seem a bit weird to be taking the expectation of a distribution $$p(\mathbf{theta}, x)$$, but here its just easier to think of \\( p(\mathbf{\theta}, x)\\) as some function of \\(\theta \\) with x held fixed.
+
+Immeditely, we can see that the EBLO is simply the negative KL divergence plus some additive constant.  Thus, maximizing the ELBO will minimize the KL divergence, which will then give us the variational distribution that we want.  Furthermore, because we have dropped the intractable constant, we can actually compute the ELBO.  
 
 In addition to being our optimizational objective, the ELBO also has the nice property of providing a lower bound for the marginal likelihood/evidence (hence the name).  To see this, observe that
 
@@ -73,31 +75,31 @@ Thus, we have formulated a tractable variational objective: find the distributio
 
 ## The Mean Field Assumption and the Coordinate Ascent Updates <a name="cavi"></a>
 
-Now that we have the function we want to maximize, the next step is to figure out how to actually maximize this thing.  The easiest, and arguably simplest way, is to apply coordinate ascent, where we maximize with respect to one variable at each sweep, holding all others constant.  Lets start by clarifying my notation.  Let \\(\theta \\) be the vector of all parameters, and \\(\theta_{j} \\) be the jth parameter in the parameter vector.  Similarly, let \\(\mathbf{x} \\) be the vector of observed data and \\(x_{i} \\) be the ith datapoint.  Let \\(-j \\) denote everything except for j.  For example, $$\mathbb{E}_{-j} [\mathbf{ \theta_{-j}}] $$ would represent the expectation of all of the theta parameters, except for the jth one.  With all that out of the way, lets get started.
+Now that we have the function we want to maximize, the next step is to figure out how to actually maximize this thing.  The easiest, and arguably simplest way, is to apply coordinate ascent, where we maximize with respect to one variable at each sweep, holding all others constant.  Lets start by clarifying my notation.  Let \\(\theta \\) be the vector of all parameters, and \\(\theta_{j} \\) be the jth parameter in the parameter vector.  Similarly, let \\(\mathbf{x} \\) be the vector of observed data and \\(x_{i} \\) be the ith datapoint.  Let \\(-j \\) denote everything except for j.  For example, $$\mathbb{E}_{-j} [\mathbf{ \theta_{-j}}] $$ would represent the expectation of all of the theta parameters, except for the jth one.
 
 First, we make a simplifying assumption.  In what we call the __mean field assumption__, we assume that the joint variational distributions of our parameters decomposes into the product of the marginals:
 
 $$q(\mathbf{\theta}) = \prod_{i=1}^{k}q(\theta_{i}) $$
 
-As we will see, this simplifies the derivations greatly.  However, at the same time, it also completely ignores the covariance between the parameters, which is why you will often hear people make the statement that VI significantly underestimates the variance of its estimated parameters.  This is very true, and is something to always keep in mind when you apply VI to some modeling problem.
+As we will see, this simplifies the derivations greatly.  However, at the same time, it also completely ignores the covariance between the parameters, which is often why VI significantly underestimates the variance of its estimated parameters.  This drawback is something to be aware of when choosing to make the mean field assumption or not.
 
 Lets go ahead and manually maximize the ELBO.  I claim that the optimal update for the variational distribution of \\(q(\theta_{i}) \\) takes the form
 
-$$q^{*}(\theta_{j}) \propto exp(\mathbb{E}_{-j}[\log\, p(\theta_{j} \vert \theta_{-j}, \mathbf{x})]) $$
+$$q^{*}(\theta_{j}) \propto \exp(\mathbb{E}_{-j}[\log\, p(\theta_{j} \vert \theta_{-j}, \mathbf{x})]) $$
 
-Where the expectation is taken with respect to the variational distributions of the parameters (not the actual distributions)!  Note that we can rewrite the term in the expectation in a bunch of different ways: this is because $$p(\theta_{j} \vert \theta_{-j}, \mathbf{x}) \propto p(\theta_{j}, \theta_{-j} \vert \mathbf{x}) \propto p(\theta_{j}, \theta_{-j}, \mathbf{x}) $$ and so on.  And, because it is a proportionality symbol, this is not a true distribution, but rather something that is _proportional_ to a probability distribution.  Begin by rewriting the ELBO as a function of \\(\theta_{j} \\):
+Where the expectation is taken with respect to the variational distributions of the parameters (the $$q$$'s). Note that we can rewrite the term in the expectation in a bunch of different ways: this is because $$p(\theta_{j} \vert \theta_{-j}, \mathbf{x}) \propto p(\theta_{j}, \theta_{-j} \vert \mathbf{x}) \propto p(\theta_{j}, \theta_{-j}, \mathbf{x}) $$ and so on.  And, because it is a proportionality symbol, this is not a true distribution, but rather something that is _proportional_ to a probability distribution, meaning that we have to re-normalize the variational distribution after computing this.
+
+To prove that this really is the optimal update, begin by rewriting the ELBO as a function of \\(\theta_{j} \\):
 
 $$ELBO(q) = \mathbb{E}[\log\, p(\theta,\mathbf{x})] - \mathbb{E}[\log\, q(\theta)] =\mathbb{E}[\log\, p(\theta,\mathbf{x})] - \mathbb{E}[\sum_{i} \log\, q(\theta_{i})]   $$
 
 $$ = \mathbb{E}[\log\, p(\mathbf{\theta_{-j}}, \theta_{j}, \mathbf{x})] - \mathbb{E}_{j}[\log\, q(\theta_{j})] + const $$
 
-First I'll clarify that the first expectation is a k dimensional integral, since we have k parameters.  I'm going to go ahead and apply iterated expectation to our first term, which then turns into
+To clarify, the first expectation is a k dimensional integral, since we have k parameters.  I'm going to go ahead and apply iterated expectation to our first term, which then turns into
 
-$$ = \mathbb{E}[\mathbb{E}_{-j}[\log\, p(\theta_{-j}, \theta_{j}, \mathbf{x}) \vert \theta_{-j}]] - \mathbb{E}_{-j}[\log\, q(\theta_{j})] + const $$
+$$ = \mathbb{E}_j[\mathbb{E}_{-j}[\log\, p(\theta_{-j}, \theta_{j}, \mathbf{x}) \vert \theta_{-j}]] - \mathbb{E}_{j}[\log\, q(\theta_{j})] + const $$
 
 Expand the inner term $$\mathbb{E}_{-j}[\log\, p(\theta_{-j}, \theta_{j}, \mathbf{x}) \vert \theta_{-j}] = \int q(z_{-j} \vert z_{j})(\log\, p(\theta_{j}, \theta_{-j}, \mathbf{x})) = \int q(z_{-j})\log\, p(\theta_{j}, \theta_{-j}, \mathbf{x}) $$ where the last step followed because of our mean field assumption.  Thus, the ELBO becomes
-
-$$ = \mathbb{E}[ \mathbb{E}_{-j}[ \log \, p(\theta_{j}, \theta_{-j}, \mathbf{x})]] - \mathbb{E}_{j}[\log\, q(\theta_{j})] + const $$
 
 $$= \mathbb{E}_{j}[\mathbb{E}_{-j}[\log \, p(\theta_{j}, \theta_{-j}, \mathbf{x})]] - \mathbb{E}_{j}[\log \, q(\theta_{j})] + const  $$
 
@@ -107,7 +109,9 @@ $$ = -\mathbb{E}_{j}[\log\, \frac{q(\theta_{j})}{\exp(\mathbb{E}_{-j}[\log \, p(
 
 We can see that this takes the form of the negative KL Divergence between $$q(\theta_{j}) $$ and $$\exp(\mathbb{E}_{-j}[\log \, p(\theta_{j}, \theta_{-j}, \mathbf{x})]) = q^{*}(\theta) $$ plus some additive constant.   Thus, we maximize the ELBO when we minimize the above equation: ie. when we set \\(q(\theta_{j}) = q^{*}(\theta_{j}) \\).
 
-At this point, lets stop, take a deep breath, and recap our algorithm.  At each iteration, set each variational parameter proportional to $$ \exp(\mathbb{E}_{-j}[\log\, p(\theta_{j}, \theta_{-j}, \mathbf{x})) $$.  Then, calculate the ELBO $$\mathbb{E}[\log\, p(\theta,x)] - \mathbb{E}[\log\, q(\theta)]  $$.  Repeat until convergence.  Now that we've gone through the mechanics of how Coordinate Ascent Variational Inference works, lets go ahead and see a few examples.
+Lets now step back and recap our algorithm.  At each iteration, we want to set the variational distribution proportional to $$ \exp(\mathbb{E}_{-j}[\log\, p(\theta_{j}, \theta_{-j}, \mathbf{x})) $$.  Then, calculate the ELBO $$\mathbb{E}[\log\, p(\theta,x)] - \mathbb{E}[\log\, q(\theta)]  $$.  Repeat until convergence.
+
+Now that we've gone through the mechanics of how Coordinate Ascent Variational Inference works, lets go ahead and see an example.
 
 ## Example: Mixture of Gaussians <a name="gmm"></a>
 
@@ -119,7 +123,13 @@ $$c \sim \text{Multinomial}(1, [\frac{1}{K} , \ldots \frac{1}{K}]) $$
 
 $$x|\theta,c \sim \text{N}(c^{T}\theta, 1) $$
 
-The first step is to determine which variational distributions we place on each of the parameters.  I'm going to go with a normal variational distribution for the component means, and a categorical distribution for the cluster assignments.  Note that the variational distributions do not have to be the same as the prior distributions; I could have picked any distribution I wanted to be the variational distribution.  In practice however, its a good idea to have the support of your variational distribution and parameter space line up.  My variational parameters are going to be the mean and variance of the normal variational distribution, and the probability vector for the categorical distribution.  Therefore, our variational inference model is specified by $$q(\mu \vert m, s^{2}) = \text{N}(m, s^2) $$ and $$q(c \vert \phi) = \text{Multinomial}(1, \phi) $$.  
+The first step is to determine which variational distributions we place on each of the parameters.  I'm going to go with a normal variational distribution for the component means, and a categorical distribution for the cluster assignments.
+
+Putting it explicitly, we have
+
+$$q(\mu_k \vert m_k, s_k) = N(m_k, s_k), \; q(c_i \vert \phi_i) = \text{Mult}(1, \phi_i)$$
+
+Note that the variational distributions do not have to be the same as the prior distributions; I could have picked any distribution I wanted to be the variational distribution.  In practice however, its a good idea to have the support of your variational distribution and parameter space line up. As you can see above, the variational parameters to optimize are going to be the mean and variance of the normal variational distribution, and the probability vectors for the categorical distribution.
 
 Lets start by deriving the update equations for $$c $$ first.  We have that for the ith cluster assignment (corresponding to the ith person), the joint distribution can be factorized as follows:
 
@@ -127,7 +137,13 @@ $$p(\mathbf{x}, c_{i}, c_{-i}, \mu) = p(c_{i})p(\mu \vert c_{i})p(c_{-i} \vert \
 
 Where in the last step we have removed all of the terms that do not depend on i.  Therefore, the update rule becomes
 
-$$ q^{*}(\phi_{i}) \propto \exp(\mathbb{E}[\log\, p(c_{i})] + \mathbb{E}[\log\, p(\mathbf{x} \vert \mu, c_{i})]) = \exp(-\log\, K + \mathbb{E}[\log\, p(\mathbf{x} \vert \mu, c_{i})]) \propto \exp(\mathbb{E}[log\, p(x_{i} \vert \mu, c_{i})]) $$
+$$
+\begin{align*}
+q^{*}(\phi_{i}) &\propto \exp(\mathbb{E}[\log\, p(c_{i})] + \mathbb{E}[\log\, p(\mathbf{x} \vert \mu, c_{i})]) \\
+&= \exp(-\log\, K + \mathbb{E}[\log\, p(\mathbf{x} \vert \mu, c_{i})]) \\
+&\propto \exp(\mathbb{E}[log\, p(x_{i} \vert \mu, c_{i})]) 
+\end{align*}
+$$
 
 Recall that the expectation is taken with respect to everything except for the ith component - in this case, all of the mixture means.  Obviously its taken with respect to the other cluster assignments too, but this is a constant with respect to that and so those terms in the expectation fall away.  
 
@@ -145,7 +161,7 @@ I'm going to stress again that the expectations here are with respect to the var
 
 $$q^{*}(c_{ik}) \propto \exp(c_{ik}[m_{k}x_{i} - (m_{i}^2 + s_{i}^2)/2]) = \exp(c_{ik}\, \log\, \exp( [m_{k}x_{i} - (m_{i}^2 + s_{i}^2)/2])) $$
 
-If we stare at this long enough, we can notice that this is actually the exponential family representation for the multinomial, with natural parameter \\(\eta_{k} = \log, p_{k}= \exp( [m_{k}x_{i} - (m_{i}^2 + s_{i}^2)/2])) \\).  This implies that the optimal parameter value is given by \\( \phi_{ik} \propto \exp(m_{k}x_{i} - (m_{i}^2 + s_{i}^2)/2)\\).  Note that we still have to normalize this, to enforce the constraints that\\(\sum_{k} \phi_{ik} = 1 \\).
+If we stare at this long enough, we can notice that this is actually the exponential family representation for the multinomial, with natural parameter \\(\eta_{k} = \log\, p_{k}= \log \exp( [m_{k}x_{i} - (m_{i}^2 + s_{i}^2)/2])) \\).  This implies that the optimal parameter value is given by \\( \phi_{ik} \propto \exp(m_{k}x_{i} - (m_{i}^2 + s_{i}^2)/2)\\).  Note that we still have to normalize this, to enforce the constraints that\\(\sum_{k} \phi_{ik} = 1 \\).
 
 Then, we'll derive the updates for the means.
 
@@ -189,13 +205,13 @@ $$ = \sum_{k}-\mathbb{E}[\frac{\mu_{k}^{2} - 2\mu_{k}m_{k} + m_{k}^{2}}{2s_{k}^{
 
 $$ = \sum_{k}[\frac{-m_{k}^{2} + s_{k}^{2} + 2m_{k}^{2} - m_{k}^{2}}{2s_{k}^{2}} + \frac{1}{2}\log\, s_{k}^{2}] + \sum_{i}\phi_{ik}\log\, \phi_{ik}  $$
 
-$$ = \propto - \frac{\log\, s_{k}^{2}}{2} + \sum_{i}\phi_{ik}\log\, \phi_{ik} $$
+$$ \propto - \frac{\log\, s_{k}^{2}}{2} + \sum_{i}\phi_{ik}\log\, \phi_{ik} $$
 
 Putting it together, we have: 
 
 $$ELBO = \sum_{i}\sum_{k}\phi_{ik}[-\frac{x_{i}^2}{2} + m_{k}x_{i} - \frac{m_{k}^2}{2}] + \frac{\log\, s_{k}^2}{2}   - \sum_{k}\frac{m_{k}^2 + s_{k}^2}{2\sigma^2} + \phi_{ik}\log\, \phi_{ik} $$
 
-And finally, we are done with our derivation.  For me at least, this topic was something that I had to stew on for a while before I truly began to understand it, so it's totally fine if it all seems a bit confusing at first.
+And finally, we are done with our derivation.  For me at least, this topic was something that I had to stew on for a while before I truly began to understand it. Going over the math and attempting to re-derive all of the update equations myself helped a lot with my comfort with the topic.
 
 Now, lets go ahead and see an implementation of our algorithm.  First, we'll generate some data.
 
@@ -219,7 +235,7 @@ Now, lets go ahead and see an implementation of our algorithm.  First, we'll gen
 
 ![histogram](/blog/assets/images/gmm_hist.png)
 
-And here is the code to fit the mixture model
+And here is the code to fit the mixture model, which implements the equations specified above:
 
 ```python
 	
@@ -286,6 +302,8 @@ And here is the code to fit the mixture model
 		
 ```
 
+As a final step, let's see how we did!
+
 ```python
 
 	import gmm
@@ -307,3 +325,9 @@ And here is the code to fit the mixture model
 
 ![ELBO](/blog/assets/images/elbo.png)
 
+Not bad! It looks like we converge relatively quickly and to a result that seems to be pretty reasonable.
+
+To conclude, variational inference is a technique that approximates the posterior distribution using a parametric family of distributions. Fitting a model corresponds to finding the variational distribution that is closest to the true posterior, which we measure using the ELBO.
+
+As a final remark, I'll note that this algorithm still doesn't quite scale that well. It is preferrable to MCMC for large datasets, since optimization problems will very frequently be faster than sampling problems, but as specified here, our VI algorithm still is unable to handle very large datasets of millions or billions of datapoints.
+This is something that I hope to address in the next post.
