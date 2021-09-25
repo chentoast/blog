@@ -8,13 +8,9 @@ author: Tony Chen
 Last time, I gave an introduction to Variational Inference, covering things such as the variational objective and the coordinate ascent updates.  Today, I'll begin by covering classic mean field VI in full generality, by talking about the update equations in terms of exponential families, and then, I'll go ahead and introduce Stochastic Variational Inference, which is a more efficient form of VI that can scale to larger datasets.  I'll conclude by providing an example in Latent Dirichlet Allocation, one of the most influential probabilisitic models of the last couple of decades.
 
 1. [Brief Review](#intro)
-
 2. [Complete Conditionals and the Exponential Family](#expo)
-
 3. [The Natural Gradient](#au natural)
-
 4. [Stochastic Variational Inference](#svi)
-
 5. [Example: Latent Dirichlet Allocation](#lda)
 
 ## Brief Review <a name="intro"></a>
