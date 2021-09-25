@@ -51,7 +51,9 @@ diagonal covariance for the error: $$\Sigma = \sigma^2 I$$, although this assump
 
 In this case, the posterior becomes
 
-$$y^* \vert x^*, x, y = N\left(K(x^*, X)(K(X, X) + \sigma^2 I)^{-1}y, k(x^*, x^*) - K(x^*, X)(K(X, X) + \sigma^2 I)^{-1}K(X, x^*)\right).$$
+$$\begin{align*} y^* \vert x^*, x, y = N(&K(x^*, X)(K(X, X) + \sigma^2 I)^{-1}y, \\
+& k(x^*, x^*) - K(x^*, X)(K(X, X) + \sigma^2 I)^{-1}K(X, x^*)).
+\end{align*}$$
 
 As a final topic, I'll talk a little bit about hyperparameter optimization.
 Common kernel function choices include the *squared-exponential kernel*
@@ -86,7 +88,7 @@ I'll wrap up this post with an application of GPs to reinforcement learning. Fir
 Given some MDP with states $$S$$, actions $$A$$, discount factor $$\gamma$$, and reward dynamics $$R : S \times A \to \mathbb{R}$$, TD Learning proposes to bootstrap
 the value function $$V: S \to \mathbb{R}$$ by applying the following "delta rule":
 
-$$V^{t+1}(s_{t}) = V^{t}(s_{t}) + (r_t + \gamma V^{t}(s_{t+1}) - V^{t}(s_{t})).$$
+$$V^{t+1}(s_{t}) = V^t(s_{t}) + (r_t + \gamma V^t(s_{t+1}) - V^t(s_{t})).$$
 
 The idea is that we try to adjust our estimate of $$V(s_t)$$ towards the more accurate signal $$r_t + V(s_{t+1})$$.
 
