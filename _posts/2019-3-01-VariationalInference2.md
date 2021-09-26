@@ -246,7 +246,9 @@ Again, we can see that this takes the form of a dirichlet, with natural paramete
 
 \\[ = \exp(\sum_{v}(\eta - 1 + \sum_{d} \sum_{n} z_{dn}^{k}w_{dn}^{v})\log\, \beta_{kv}) \\]
 
-So, lets recap.  We have that the complete conditional for \\(z_{dn} \\) is a multinomial, with natural parameter \\( \theta_{dk} + \beta_{k, z_{dn}} \\).  The complete conditional for \\(\theta_{d} \\) is a dirichlet, with natural parameter \\(\alpha - 1 + \sum_{n}z_{dn} \\).  Finally, the complete conditional for \\(\beta_{k} \\) is also a dirichlet, with natural parameter \\(\eta - 1 + \sum_{d} \sum_{n} z_{dn}^{k}w_{dn} \\).  We'll chose our variational distributions according to that, so \\(q(z_{dn}) = \text{Multinomial}(\phi_{dn}), \; q(\theta_{d}) = \text{Dirichlet}(\gamma_{d}), \; q(\beta_{k}) = \text{Dirichlet}(\lambda_{k}) \\).  
+So, lets recap.  We have that the complete conditional for \\(z_{dn} \\) is a multinomial, with natural parameter \\( \theta_{dk} + \beta_{k, z_{dn}} \\).  The complete conditional for \\(\theta_{d} \\) is a dirichlet, with natural parameter \\(\alpha - 1 + \sum_{n}z_{dn} \\).  Finally, the complete conditional for \\(\beta_{k} \\) is also a dirichlet, with natural parameter \\(\eta - 1 + \sum_{d} \sum_{n} z_{dn}^{k}w_{dn} \\).  We'll chose our variational distributions according to that, so
+
+$$q(z_{dn}) = \text{Multinomial}(\phi_{dn}), \; q(\theta_{d}) = \text{Dirichlet}(\gamma_{d}), \; q(\beta_{k}) = \text{Dirichlet}(\lambda_{k}).$$  
 
 Now, we'll derive the coordinate ascent updates, which as you'll recall, simply involves taking the expectation of the natural parameters.
 
