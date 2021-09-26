@@ -120,6 +120,10 @@ td {
   max-width: 100%;
 }
 
+.post ol {
+	overflow-x: "scroll"
+}
+
 .highlight pre {
 	overflow-x:auto;
 	overflow-y:hidden;
@@ -144,15 +148,9 @@ td {
 	font-size: .7em
 }
 
-.mjx-chtml.MJXc-display {
-	overflow-x:auto;
-	overflow-y:hidden;
-	font-size: 1.15em;
-}
-
 ::-webkit-scrollbar {
-	height: 6px;
-	width: 7px;
+	height: .3em;
+	width: .35em;
 }
 
 ::-webkit-scrollbar-thumb {
