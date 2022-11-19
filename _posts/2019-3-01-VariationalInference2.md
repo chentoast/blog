@@ -65,7 +65,7 @@ Note that because this is a conditional density, the natural parameter \\(\eta \
 
 We can see from this that the optimal variational distribution falls into the same exponential family of the complete conditional, with updated parameter \\(\mathbb{E}_{-j}[\eta^{T}] \\).  Therefore, when we do coordinate ascent, we simply update the variational parameter according to \\(\xi = \mathbb{E}[\eta^{T}] \\).  Things are already looking a lot nicer and more general!
 
-Now, lets consider a basic extension of the model we've been working with so far.  Many probabilistic models can be formulated in terms of three things: the data, denoted by \\(\mathbf{x} \\), the global variables \\(\beta \\), and the local variables \\(z \\), which are parameters that are associated with each datapoint.  In addition, we will generally assume independence among the local variables conditioned on the global variables: that is, \\(p(z_{i}, x_{i} \vert z_{-i}, x_{-i}, \beta) = p(z_{i}, x_{i} \vert \beta) \\) for all datapoints i.  Thus, our joint will factorize as follows: \\(p(\mathbf{z}, \mathbf{x}, \beta = p(\beta) \prod_{i} p(z_{i}, x_{i} \vert \beta) \\).  We'll denote by \\(\lambda \\) the variational parameter for the global variables and \\(\phi \\) the variational parameters for the local variables.
+Now, lets consider a basic extension of the model we've been working with so far.  Many probabilistic models can be formulated in terms of three things: the data, denoted by \\(\mathbf{x} \\), the global variables \\(\beta \\), and the local variables \\(z \\), which are parameters that are associated with each datapoint.  In addition, we will generally assume independence among the local variables conditioned on the global variables: that is, \\(p(z_{i}, x_{i} \vert z_{-i}, x_{-i}, \beta) = p(z_{i}, x_{i} \vert \beta) \\) for all datapoints i.  Thus, our joint will factorize as follows: \\(p(\mathbf{z}, \mathbf{x}, \beta) = p(\beta) \prod_{i} p(z_{i}, x_{i} \vert \beta) \\).  We'll denote by \\(\lambda \\) the variational parameter for the global variables and \\(\phi \\) the variational parameters for the local variables.
 
 With this specification of the general model, we can repeat the same process, and specify exponential family representations of the complete conditionals.  To start with, lets assume that the local variables conditioned on the globals are in the exponential family, with natural parameter \\(\beta \\):
 
@@ -105,7 +105,7 @@ Where I've thrown out everything that doesn't depend on \\(\beta \\).
 
 \\[ \nabla_{\lambda}ELBO = \nabla_{\lambda}\mathbb{E}[\eta_{g}^{T}T(\beta)] - \nabla_{\lambda}\mathbb{E}[\lambda^{T}T(\beta)] +  \nabla_{\lambda}A(\lambda) \\]
 
-By application of the identity that the expectation of \\(T(\beta) \\) is the first derivative of the log normalizer \\(A(\lambda) \\) (because we are taking this expectation with respect to \\( q(\beta) \\), this becomes
+By application of the identity that the expectation of \\(T(\beta) \\) is the first derivative of the log normalizer \\(A(\lambda) \\) (because we are taking this expectation with respect to \\( q(\beta) \\)), this becomes
 
 \\[ = \nabla_{\lambda}(\mathbb{E}[\eta_{g}]^{T}\nabla_{\lambda}A(\lambda)) - \nabla_{\lambda}(\lambda^{T}\nabla_{\lambda}A(\lambda)) \\]
 
@@ -115,7 +115,7 @@ By application of the identity that the expectation of \\(T(\beta) \\) is the fi
 
 Analogously, the gradient with respect to \\(\phi_{i} \\) turns out to be \\(\nabla_{\phi_{i}}^{2}(\mathbb{E}[\eta_{l, i}]^{T} - \phi_{i}) \\), where we calculate \\(\eta_{l,i} \\) only using the datapoints \\(x_{i}, z_{i} \\).
 
-There is one problem, though.  The gradient is implicitly defined in the euclidean space, where the distance metric is the traditional \\(\ell_{2} \\) norm.  However, the \\(\ell_{2} \\) norm is not a good distance metric for probability distributions: take the below gaussians as an example.
+There is one problem, though.  The gradient is implicitly defined in the euclidean space, where the distance metric is the traditional \\(\ell_{2} \\) norm.  However, the \\(\ell_{2} \\) norm across parameters is often not a good distance metric for probability distributions.
 
 Thus, we need to define another gradient with respect to a better distance metric for probability distributions.  A natural one to use is the __symmetrized KL Divergence__
 

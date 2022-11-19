@@ -45,22 +45,22 @@ a:hover:before {
 	-moz-transform: scaleX(1);
 }
 
+td {
+	word-wrap:break-word;
+	height:1px;
+	padding-top: 2%;
+}
+
 .post-listings {
 	table-layout: fixed;
 	width:60%;
-  margin-bottom:30%;
+  margin-bottom: 13vh;
 	font-size: .75em;
 	margin-left:auto;
 	margin-right:auto;
 	text-align:left;
 	animation-name: fadein;
 	animation-duration: 2s;
-}
-
-td {
-	word-wrap:break-word;
-	height:1px;
-	padding-top: 2%;
 }
 
 .header {
@@ -92,7 +92,7 @@ td {
 .post-contents {
 	margin-left:auto;
 	margin-right:auto;
-	margin-bottom: 30%;
+	margin-bottom: 13vh;
 	width: 50%;
 	font-size: .75em;
 	line-height: 1.5;
@@ -144,8 +144,8 @@ td {
 	position: fixed;
 	bottom: 0;
 	left: 20%;
-	height: 10%;
-	margin-top: 5%;
+  height:10vh;
+	margin-top: 3vh;
 	width: 60%;
 	text-align: center; 
 }

@@ -11,7 +11,7 @@ author: Tony Chen
 
 Life update: I’ve started grad school!
 
-The goal of the next few posts will be to gradually build up to this paper here: (planning as diffusion). In order to do so, I’ll need to fully build up some technical machinery along the way - we won’t be re-deriving everything from first principles, but will present the basic results necessary to understand the paper at a conceptual level. In this post, we’ll be covering an interesting reformulation of the reinforcement learning framework, by casting learning as inference in a very specially structured graphical model.
+The goal of the next few posts will be to gradually build up to this paper here: [planning as diffusion](https://arxiv.org/abs/2205.09991). In order to do so, I’ll need to fully build up some technical machinery along the way - we won’t be re-deriving everything from first principles, but will present the basic results necessary to understand the paper at a conceptual level. In this post, we’ll be covering an interesting reformulation of the reinforcement learning framework, by casting learning as inference in a very specially structured graphical model.
 
 ## The Control as Inference Model  <a name="casi"></a>
 

@@ -2,7 +2,7 @@ name: tony chen - blog
 author: Tony Chen
 email: chen.tony@mit.edu
 description: Notes from tony chen on statistics, machine learning, and AI
-url: "https://chentoast.github.io"
+url: "chentoast.github.io"
 baseurl: "/notes"
 markdown: kramdown
 highlighter: rouge
