@@ -1,9 +1,9 @@
-name: Completely Random Measure
+name: tony chen - blog
 author: Tony Chen
-email: tchen1998@gmail.com
-description: A series of notebooks on topics in statistics and machine learning.
-url: "chentau.github.io"
-baseurl: "/blog"
+email: chen.tony@mit.edu
+description: Notes from tony chen on statistics, machine learning, and AI
+url: "https://chentoast.github.io"
+baseurl: "/notes"
 markdown: kramdown
 highlighter: rouge
 kramdown:

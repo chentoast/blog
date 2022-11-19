@@ -233,7 +233,7 @@ Now, lets go ahead and see an implementation of our algorithm.  First, we'll gen
 
 ```
 
-![histogram](/blog/assets/images/gmm_hist.png)
+![histogram](/notes/assets/images/gmm_hist.png)
 
 And here is the code to fit the mixture model, which implements the equations specified above:
 
@@ -321,9 +321,9 @@ As a final step, let's see how we did!
 	plt.show()
 ```
 
-![Fitted model](/blog/assets/images/gmm_fit.png)
+![Fitted model](/notes/assets/images/gmm_fit.png)
 
-![ELBO](/blog/assets/images/elbo.png)
+![ELBO](/notes/assets/images/elbo.png)
 
 Not bad! It looks like we converge relatively quickly and to a result that seems to be pretty reasonable.
 

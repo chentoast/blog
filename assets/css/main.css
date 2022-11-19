@@ -45,9 +45,10 @@ a:hover:before {
 	-moz-transform: scaleX(1);
 }
 
-table {
+.post-listings {
 	table-layout: fixed;
 	width:60%;
+  margin-bottom:30%;
 	font-size: .75em;
 	margin-left:auto;
 	margin-right:auto;
@@ -91,7 +92,7 @@ td {
 .post-contents {
 	margin-left:auto;
 	margin-right:auto;
-	margin-bottom: 12%;
+	margin-bottom: 30%;
 	width: 50%;
 	font-size: .75em;
 	line-height: 1.5;
@@ -122,6 +123,11 @@ td {
 
 .post ol {
 	overflow-x: "scroll"
+}
+
+.post img {
+	display: block;
+	margin: auto;
 }
 
 .highlight pre {
