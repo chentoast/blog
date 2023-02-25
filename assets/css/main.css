@@ -1,6 +1,4 @@
----
----
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Nunito+Sans:wght@600;700&display=swap');
 
 @keyframes fadein {
 	from {opacity: 0;}
@@ -9,7 +7,8 @@
 
 * {
 	font-family:"Inter", "Georgia";
-	background-color:whitesmoke !important;
+	/* background-color:whitesmoke !important; */
+	background-color: white;
 }
 
 a {
@@ -17,6 +16,7 @@ a {
 	position: relative;
 	color:black;
 	text-decoration:none;
+  padding-bottom: 5px;
 }
 
 /* header and main page */
@@ -73,6 +73,7 @@ td {
 
 .header a {
 	font-size: 1em;
+	font-weight: 100;
 }
 
 .listing-date {
@@ -117,6 +118,7 @@ td {
 }
 
 .post img {
+  box-shadow: 0 0 10px gray;
 	border: 1px solid skyblue;
   max-width: 100%;
 }
@@ -125,12 +127,17 @@ td {
 	overflow-x: "scroll"
 }
 
+.post li {
+  padding-bottom: 5px;
+}
+
 .post img {
 	display: block;
 	margin: auto;
 }
 
 .highlight pre {
+  box-shadow: 0 0 10px gray;
 	overflow-x:auto;
 	overflow-y:hidden;
 	border:1px solid lightskyblue;
@@ -147,7 +154,7 @@ td {
   height:10vh;
 	margin-top: 3vh;
 	width: 60%;
-	text-align: center; 
+	text-align: center;
 }
 
 .footer a {
@@ -182,7 +189,7 @@ td {
 	.post-listings {
 		width:100%;
 	}
-	
+
 	.post-contents {
 		margin-left:auto;
 		margin-right:auto;
@@ -191,7 +198,7 @@ td {
 		max-width:100%;
 		text-align:center;
 	}
-	
+
 	.footer {
 		width: 90%;
 		left: 5%;

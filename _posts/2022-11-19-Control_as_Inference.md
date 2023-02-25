@@ -4,14 +4,14 @@ title: Control as Inference
 author: Tony Chen 
 ---
 
+Life update: I’ve started grad school!
+
+The goal of the next few posts will be to gradually build up to this paper here: [planning as diffusion](https://arxiv.org/abs/2205.09991). In order to do so, I’ll need to fully build up some technical machinery along the way - we won’t be re-deriving everything from first principles, but will present the basic results necessary to understand the paper at a conceptual level. In this post, we’ll be covering an interesting reformulation of the reinforcement learning framework, by casting learning as inference in a very specially structured graphical model.
+
 1. [The Control as Inference Model](#casi)
 2. [Inference in the Model](#inference)
 3. [Connections to Maximum Entropy RL](#maxent)
 4. [Conclusion](#conclusion)
-
-Life update: I’ve started grad school!
-
-The goal of the next few posts will be to gradually build up to this paper here: [planning as diffusion](https://arxiv.org/abs/2205.09991). In order to do so, I’ll need to fully build up some technical machinery along the way - we won’t be re-deriving everything from first principles, but will present the basic results necessary to understand the paper at a conceptual level. In this post, we’ll be covering an interesting reformulation of the reinforcement learning framework, by casting learning as inference in a very specially structured graphical model.
 
 ## The Control as Inference Model  <a name="casi"></a>
 
@@ -87,7 +87,7 @@ $$
 
 ## Maximum Entropy Reinforcement Learning <a name="maxent"></a>
 
-We’ll use the work we’ve just done to derive another way to approximate to this policy, which will lead us to a closely related framework often termed as **********Maximum Entropy Reinforcement Learning**********. To start with, we’ll use a variational approximation to the trajectory, so we’ll be working in an optimization setting.
+We’ll use the work we’ve just done to derive another way to approximate to this policy, which will lead us to a closely related framework often termed as *Maximum Entropy Reinforcement Learning*. To start with, we’ll use a variational approximation to the trajectory, so we’ll be working in an optimization setting.
 
 Recall our distribution over trajectories, conditioned on their optimality: 
 
